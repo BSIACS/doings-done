@@ -14,6 +14,8 @@ if ($checkbox.length) {
 }
 
 var $taskCheckboxes = document.getElementsByClassName('tasks');
+console.log($taskCheckboxes);
+
 
 if ($taskCheckboxes.length) {
 
@@ -35,3 +37,38 @@ flatpickr('#date', {
   dateFormat: "Y-m-d",
   locale: "ru"
 });
+
+var project_links = document.getElementsByClassName('main-navigation__list-item-link');
+
+if (project_links.length > 0) {
+  for (let i = 0; i < project_links.length; ++i) {
+    project_links[i].addEventListener('click', (evt) => {
+      evt.preventDefault();
+      var queryParams = new URLSearchParams(window.location.search);
+      if (project_links[i].dataset.project_id) {
+        queryParams.set('filter_by_project_id', project_links[i].dataset?.project_id);
+        window.location = '/index.php?' + queryParams.toString();
+      }
+      else {
+        queryParams.delete('filter_by_project_id');
+        window.location = '/index.php?' + queryParams.toString();
+      }
+
+    });
+  }
+};
+
+var taskSwitchLinks = document.getElementsByClassName('tasks-switch__item');
+
+if (taskSwitchLinks.length > 0) {
+  for (let i = 0; i < taskSwitchLinks.length; ++i) {
+    taskSwitchLinks[i].addEventListener('click', (evt) => {
+      evt.preventDefault();
+      var queryParams = new URLSearchParams(window.location.search);
+      queryParams.set('filter_by_task_group', taskSwitchLinks[i].dataset?.filter_by_task_group);
+      window.location = '/index.php?' + queryParams.toString();
+    });
+  }
+};
+
+
