@@ -1,0 +1,62 @@
+version: '3.9'
+
+services:
+  php:
+    build: ./dockerfiles/mysql
+    # image: php:8.2-fpm
+    container_name: php
+    restart: always
+    volumes:
+    - ./app:/var/www/html
+    ports:
+    - "9000:9000"
+    networks:
+      - app_network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./app:/var/www/html
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - php
+    networks:
+      - app_network
+
+  db:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - app_network
+
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    ports:
+    - '8087:80'
+    environment:
+      PMA_HOST: db
+    networks:
+      - app_network
+
+volumes:
+  db_data:
+
+networks:
+  app_network:
+
+
