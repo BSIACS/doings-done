@@ -146,42 +146,31 @@ function include_template($name, array $data = [])
 }
 
 /**
- * Моя тестовая функция
- */
-function test_func()
-{
-    echo (42);
-}
-
-/**
- * Моя тестовая функция
- * @param array $tasks Cписок задач в виде массива
- * @param array $project Название проекта
- * @return int количество задач для переданного проекта 
- */
-function get_task_count_by_project($tasks, $project)
-{
-    $tasks_count = 0;
-
-    foreach ($tasks as $key => $value) {
-        if ($value["project_name"] == $project) {
-            ++$tasks_count;
-        }
-    }
-
-    return $tasks_count;
-}
-
-/**
  * Функция вычисляет разницу между сегодняшней датой и датой переданной в качестве аргумента в секундах
  * @param string $time
  * @return int количество секунд
  */
-function get_time_diff_in_sec(string $time)
+function getTimeDiffInSec(string $time)
 {
     date_default_timezone_set('Europe/Moscow');
     $timestamp_1 = strtotime($time);
     $timestamp_2 = strtotime('now');
 
     return $timestamp_1 - $timestamp_2;
+}
+
+/**
+ * Функция удаляет перечисленные параметры из строки запроса
+ * @param string $uri идентификатор ресурса
+ * @param array $paramNames массив содержащий параметры строки, которые требуется удалить из строки запроса
+ * @return string модифицированный идентификатор ресурса
+ */
+function removeQueryParams(string $uri, array $paramNames) {
+  list($url, $queryParamsStr) = array_pad(explode('?', $uri), 2, '');
+  parse_str($queryParamsStr, $queryParamsArray);
+  for($i = 0; $i < count($paramNames); $i++) {
+    unset($queryParamsArray[$paramNames[$i]]);
+  }
+  $modifiedQueryParamsString = http_build_query($queryParamsArray);
+  return $url . '?' . $modifiedQueryParamsString;
 }

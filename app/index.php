@@ -4,7 +4,13 @@ require_once 'helpers.php';
 require_once 'init.php';
 require_once 'queries.utils.php';
 
-$SECONDS_PER_DAY = 86400;
+const SECONDS_PER_DAY = 86400;
+const TASK_FILTER_VALUES = [
+  'all' => 'all',
+  'today' => 'today',
+  'tomorrow' => 'tomorrow',
+  'overdue' => 'overdue',
+];
 
 $showCompleteTasks = 0;
 $filteredProject = null;
@@ -12,29 +18,22 @@ $filteredTaskGroup = null;
 $projectCount = 0;
 
 
-if(isset($_GET['show_completed']) && $_GET['show_completed'] == 1) {
-  $showCompleteTasks = 1;
-}
-else {
-  $showCompleteTasks = 0;
-}
-
-if(isset($_GET['filter_by_project_id'])) {
-  $filterByProjectId = $_GET['filter_by_project_id'];
-}
-else {
-  $filterByProjectId = null;
+// ПОИСК ПАРАМЕТРОВ ДЛЯ ИЗМЕНЕНИЯ СТАТУСА ЗАДАЧИ - 'ВЫПОЛНЕНА'
+if(isset($_GET['task_id']) && isset($_GET['checked'])) {
+  $taskIdToUpdate = $_GET['task_id'];
+  $isTaskChecked = $_GET['checked'];
+  $currentUri = 'http://' . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
+  $modifiedUri = removeQueryParams($currentUri, ["task_id", "checked"]);
+  header('Location: '.$modifiedUri);
+  setIsTaskComplete($link, $taskIdToUpdate, $isTaskChecked);
 }
 
-if(isset($_GET['filter_by_task_group'])) {
-  $filterByTaskGroup = $_GET['filter_by_task_group'];
-}
-else {
-  $filterByTaskGroup = 'all';
-}
+// ИНИЦИАЛИЗАЦИЯ ПЕРЕМЕННЫХ ФИЛЬТРОВ
+isset($_GET['show_completed']) && $_GET['show_completed'] == 1 ? $showCompleteTasks = 1 : $showCompleteTasks = 0;
 
-// Тестовый вывод строки запроса
-// print_r('showCompleteTasks = ' . $showCompleteTasks . ', ' . 'filterByProjectId = ' . $filterByProjectId . ', ' . 'filterByTaskGroup = ' . $filterByTaskGroup);
+isset($_GET['filter_by_project_id']) ? $filterByProjectId = $_GET['filter_by_project_id'] : $filterByProjectId = null;
+
+isset($_GET['filter_by_task_group']) ? $filterByTaskGroup = $_GET['filter_by_task_group'] : $filterByTaskGroup = 'all';
 
 if (!$link) {
   $error = mysqli_connect_error();
@@ -53,7 +52,8 @@ if (!$link) {
   }
 
   // ЗАПРОС ЗАДАЧ
-  $resultQueryTasks = getTasks($link, 2, $filterByProjectId, $showCompleteTasks);
+  print_r($filterByTaskGroup);
+  $resultQueryTasks = getTasks($link, 2, $filterByProjectId, $showCompleteTasks, $filterByTaskGroup);
 
   if ($resultQueryTasks) {
     $tasks = mysqli_fetch_all($resultQueryTasks, MYSQLI_ASSOC);
@@ -70,7 +70,7 @@ if (!$link) {
     "filterByTaskGroup" => $filterByTaskGroup,
     "filterByProjectId" => $filterByProjectId,
     "projectCount" => $projectCount,
-    "SECONDS_PER_DAY" => $SECONDS_PER_DAY,
+    "SECONDS_PER_DAY" => SECONDS_PER_DAY,
   ]);
 }
 

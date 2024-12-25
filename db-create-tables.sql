@@ -1,13 +1,10 @@
--- CREATE DATABASE doings_done_db DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
-
 CREATE DATABASE doings_done_db DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_0900_ai_ci;
 
 CREATE TABLE users (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   email VARCHAR(128) NOT NULL UNIQUE,
   name VARCHAR(128) NOT NULL,
-  password CHAR(64) NOT NULL -- CONSTRAINT email
-  --   UNIQUE (email)
+  password CHAR(64) NOT NULL
 );
 
 CREATE TABLE projects (
@@ -19,12 +16,10 @@ CREATE TABLE projects (
 
 CREATE TABLE tasks (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  -- date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
   date_creation DATE DEFAULT (CURRENT_DATE),
   is_complete BOOLEAN NOT NULL,
   name VARCHAR(128) NOT NULL,
   file_path VARCHAR(512),
-  -- date_expiration DATETIME NOT NULL,
   date_expiration DATE,
   author_id INT UNSIGNED NOT NULL,
   project_id INT UNSIGNED NOT NULL,
