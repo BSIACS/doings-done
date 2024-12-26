@@ -1,0 +1,28 @@
+CREATE DATABASE doings_done_db DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_0900_ai_ci;
+
+CREATE TABLE users (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(128) NOT NULL UNIQUE,
+  name VARCHAR(128) NOT NULL,
+  password CHAR(64) NOT NULL
+);
+
+CREATE TABLE projects (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(256) NOT NULL,
+  author_id INT UNSIGNED NOT NULL,
+  FOREIGN KEY (author_id) REFERENCES users (id)
+);
+
+CREATE TABLE tasks (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  date_creation DATE DEFAULT (CURRENT_DATE),
+  is_complete BOOLEAN NOT NULL,
+  name VARCHAR(128) NOT NULL,
+  file_path VARCHAR(512),
+  date_expiration DATE,
+  author_id INT UNSIGNED NOT NULL,
+  project_id INT UNSIGNED NOT NULL,
+  FOREIGN KEY (author_id) REFERENCES users (id),
+  FOREIGN KEY (project_id) REFERENCES projects (id)
+);
