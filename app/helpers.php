@@ -165,12 +165,28 @@ function getTimeDiffInSec(string $time)
  * @param array $paramNames массив содержащий параметры строки, которые требуется удалить из строки запроса
  * @return string модифицированный идентификатор ресурса
  */
-function removeQueryParams(string $uri, array $paramNames) {
-  list($url, $queryParamsStr) = array_pad(explode('?', $uri), 2, '');
-  parse_str($queryParamsStr, $queryParamsArray);
-  for($i = 0; $i < count($paramNames); $i++) {
-    unset($queryParamsArray[$paramNames[$i]]);
-  }
-  $modifiedQueryParamsString = http_build_query($queryParamsArray);
-  return $url . '?' . $modifiedQueryParamsString;
+function removeQueryParams(string $uri, array $paramNames)
+{
+    list($url, $queryParamsStr) = array_pad(explode('?', $uri), 2, '');
+    parse_str($queryParamsStr, $queryParamsArray);
+    for ($i = 0; $i < count($paramNames); $i++) {
+        unset($queryParamsArray[$paramNames[$i]]);
+    }
+    $modifiedQueryParamsString = http_build_query($queryParamsArray);
+    return $url . '?' . $modifiedQueryParamsString;
+}
+
+function redirectToErrorPage()
+{
+    header('Location: http://' . $_SERVER["HTTP_HOST"] .  '/error.php');
+}
+
+function redirectToErrorPage500()
+{
+    header('Location: http://' . $_SERVER["HTTP_HOST"] .  '/error-500.php');
+}
+
+function redirectToIndexPage()
+{
+    header('Location: http://' . $_SERVER["HTTP_HOST"] .  '/index.php');
 }

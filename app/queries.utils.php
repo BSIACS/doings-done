@@ -26,7 +26,7 @@ function getTasks(mysqli $link, string $userId, string $projectId = null, string
       $queryDateFilter = " AND DATE(tasks.date_expiration) < CURRENT_DATE() AND tasks.is_complete = 0";
       break;
     default:
-      $queryDateFilter = "";//" AND DATE(tasks.date_expiration) >= CURRENT_DATE()";
+      $queryDateFilter = "";
   }
 
   if ($projectId != null) {
@@ -39,7 +39,11 @@ function getTasks(mysqli $link, string $userId, string $projectId = null, string
     WHERE tasks.author_id=$userId" . $queryAlsoShowIsComplete . $queryDateFilter . " ORDER BY tasks.date_expiration DESC;";
   }
 
-  $tasks = mysqli_query($link, $queryTasks);
+  try {
+    $tasks = mysqli_query($link, $queryTasks);
+  } catch (Throwable $throwable) {
+    redirectToErrorPage500();
+  }
 
   return $tasks;
 }
@@ -51,8 +55,11 @@ function getProjects(mysqli $link, string $userId)
                   WHERE projects.author_id = $userId
                   GROUP BY projects.id;";
 
-
-  $projects = mysqli_query($link, $queryProjects);
+  try {
+    $projects = mysqli_query($link, $queryProjects);
+  } catch (Throwable $throwable) {
+    redirectToErrorPage500();
+  }
 
   return $projects;
 }
@@ -63,7 +70,27 @@ function setIsTaskComplete(mysqli $link, string $taskId, string $isCompleteNewVa
             SET tasks.is_complete = $isCompleteNewValue 
             WHERE tasks.id = $taskId;";
 
-  printf($query);
+  try {
+    mysqli_query($link, $query);
+  } catch (Throwable $throwable) {
+    redirectToErrorPage500();
+  }
+}
 
-  mysqli_query($link, $query);
+/**
+ * Добавляет новый проект в БД
+ * @param mysqli $link mysqli соединение
+ * @param string $projectName название проекта
+ * @param string $authorId идентификатор пользователя, создающего проект
+*/
+function addProject(mysqli $link, string $projectName, string $authorId)
+{
+  $query = "INSERT INTO projects
+            SET name = '$projectName', author_id = $authorId";
+
+  try {
+    $res = mysqli_query($link, $query);
+  } catch (Throwable $throwable) {
+    redirectToErrorPage500();
+  }
 }
