@@ -54,10 +54,13 @@ function validateIsProjectExist(string $name, array $projects)
   $projectNames = [];
 
   foreach ($projects as $value) {
-    array_push($projectNames, $value['name']);
+    $upperCaseNameValue = mb_strtoupper($value['name']);
+    array_push($projectNames, $upperCaseNameValue);
   }
+  
+  $upperCaseNewNameValue = mb_strtoupper($name);
 
-  if (in_array($name, $projectNames)) {
+  if (in_array($upperCaseNewNameValue, $projectNames)) {
     return 'Проект с таким именем уже существует';
   };
 
