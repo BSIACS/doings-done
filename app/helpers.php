@@ -190,3 +190,52 @@ function redirectToIndexPage()
 {
     header('Location: http://' . $_SERVER["HTTP_HOST"] .  '/index.php');
 }
+
+/**
+ * Проверяет существуют ли директории по указанному пути и если нет, то содаёт их
+ * @param string $directory путь к директории вида 'cat1/cat2/cat3'
+ */
+function mkdirIfNotExist(string $directory)
+{
+    $dirNames = [];
+
+    for ($i = 0, $k = 0; $i < strlen($directory); $i++) {
+        if (!isset($dirNames[$k])) {
+            $dirNames[$k] = '';
+        }
+
+        if ($directory[$i] !== '/') {
+            $dirNames[$k] .= $directory[$i];
+        }
+
+        if ($directory[$i] === '/') {
+            $k++;
+        }
+    }
+
+    for ($i = 0, $path = ''; $i < sizeof($dirNames); $i++) {
+        if($i === 0) {
+            $path .= $dirNames[$i];
+        } else {
+            $path .= '/' . $dirNames[$i];
+        }
+
+        if(!is_dir($path)) {
+            mkdir($path);
+        }
+    }
+}
+
+function pathToFileName(string $path)
+{
+    $fileName = '';
+
+    for ($i = strlen($path) - 1; $i >= 0; $i--) { 
+        if($path[$i] === '/') {
+            break;
+        }
+        $fileName = $path[$i] . $fileName;
+    }
+
+    return $fileName;
+}

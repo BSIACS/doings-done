@@ -6,13 +6,12 @@ require_once './constants.php';
  * @param array $inputs массив вида ключ-значение. 
  * Ключ - идентификатор поля; значение - введенные пользователем данные
  * @param array $rules массив содержащий функции, описывающие правила валидации
- * @return array $validationErrors массив вида ключ-значение.
+ * @param array $validationErrors массив вида ключ-значение
+ * @return array $validationErrors массив вида ключ-значение
  * Ключ - идентификатор поля; значение - массив, содержащий описания несоответствий
  */
-function validateInputs(array $inputs, array $rules): array
+function validateInputs(array $inputs, array $rules, array &$validationErrors): array
 {
-  $validationErrors = [];
-
   foreach ($inputs as $key => $value) {
     if (isset($rules[$key])) {
 
@@ -27,6 +26,15 @@ function validateInputs(array $inputs, array $rules): array
         }
       }
     }
+  }
+
+  return $validationErrors;
+}
+
+function validateFileInput(string $fileInputName, &$validationErrors): array
+{
+  if ($_FILES && $_FILES[$fileInputName]['error'] != UPLOAD_ERR_OK) {
+    $validationErrors[$fileInputName] = ['Ошибка загрузки файла. Размер загружаемого файла должен быть менее 2Mb'];
   }
 
   return $validationErrors;
@@ -88,6 +96,13 @@ function validateIsDateFormatValid(string $date)
   if (!preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $date)) {
     return 'Неверный формат даты';
   }
+
+  return null;
+}
+
+function validateMaxFileSize($file)
+{
+  print_r('zzzzzzzzzzzzzzzzzzzzzzzzz --- ', $file);
 
   return null;
 }

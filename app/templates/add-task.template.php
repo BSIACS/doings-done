@@ -33,7 +33,7 @@
 <main class="content__main">
   <h2 class="content__main-heading">Добавление задачи</h2>
 
-  <form class="form" action="" method="post" autocomplete="off">
+  <form class="form" action="" method="post" autocomplete="off" enctype="multipart/form-data">
     <div class="form__row">
       <label class="form__label" for="name">Название <sup>*</sup></label>
 
@@ -77,6 +77,7 @@
           <span>Выберите файл</span>
         </label>
       </div>
+      <?= isset($validationErrors['file']) ? "<p class='form__message'>" . $validationErrors["file"][0] . "</p>" : null ?>
     </div>
 
     <div class="form__row form__row--controls">

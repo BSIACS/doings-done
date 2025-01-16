@@ -53,9 +53,18 @@ if (!$link) {
 
     $inputs = filter_input_array(INPUT_POST, $args);
 
-    $validationErrors = validateInputs($inputs, $rules);
+    $validationErrors = [];
+    validateInputs($inputs, $rules, $validationErrors);  
+    validateFileInput('file', $validationErrors);
+
     if (count($validationErrors) <= 0) {
       addTask($link, $inputs['name'], $inputs['date'], 2, $inputs['project']);
+      if ($_FILES && $_FILES['file']['error'] == UPLOAD_ERR_OK) {
+        $createdTaskId = mysqli_insert_id($link);
+        mkdirIfNotExist("uploads/2/$createdTaskId");
+        updateTaskFilePath($link, $createdTaskId, "uploads/2/$createdTaskId/" . $_FILES["file"]['name']);
+        move_uploaded_file($_FILES["file"]["tmp_name"], "uploads/2/$createdTaskId/" . $_FILES["file"]['name']);
+      }
       redirectToIndexPage();
     }
   }

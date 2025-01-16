@@ -115,3 +115,15 @@ function addTask(mysqli $link, string $taskName, string $expirationDate, string 
     redirectToErrorPage500();
   }
 }
+
+function updateTaskFilePath(mysqli $link, string $taskId, string $filePath)
+{
+  $query = "UPDATE tasks
+            SET tasks.file_path = '$filePath' WHERE id = $taskId;";
+
+  try {
+    $res = mysqli_query($link, $query);
+  } catch (Throwable $throwable) {
+    redirectToErrorPage500();
+  }
+}

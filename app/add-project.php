@@ -44,7 +44,8 @@ if (!$link) {
 
     $inputs = filter_input_array(INPUT_POST, $args);
 
-    $validationErrors = validateInputs($inputs, $rules);
+    $validationErrors = [];
+    validateInputs($inputs, $rules, $validationErrors);
 
     if (count($validationErrors) <= 0) {
       addProject($link, $inputs['name'], '2');
