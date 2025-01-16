@@ -82,11 +82,44 @@ function setIsTaskComplete(mysqli $link, string $taskId, string $isCompleteNewVa
  * @param mysqli $link mysqli соединение
  * @param string $projectName название проекта
  * @param string $authorId идентификатор пользователя, создающего проект
-*/
+ */
 function addProject(mysqli $link, string $projectName, string $authorId)
 {
   $query = "INSERT INTO projects
             SET name = '$projectName', author_id = $authorId";
+
+  try {
+    $res = mysqli_query($link, $query);
+  } catch (Throwable $throwable) {
+    redirectToErrorPage500();
+  }
+}
+
+/**
+ * Добавляет новую задачу в БД
+ * @param mysqli $link mysqli соединение
+ * @param string $taskName название задачи
+ * @param string $expirationDate срок выполнения задачи
+ * @param string $authorId идентификатор пользователя, создающего задачу
+ * @param string $projectId идентификатор проекта, к которому относится задача
+ */
+function addTask(mysqli $link, string $taskName, string $expirationDate, string $authorId, string $projectId)
+{
+  $query = "INSERT INTO tasks (is_complete, name, date_expiration, author_id, project_id)
+            VALUES
+            (false, '$taskName', '$expirationDate', '$authorId', '$projectId');";
+
+  try {
+    $res = mysqli_query($link, $query);
+  } catch (Throwable $throwable) {
+    redirectToErrorPage500();
+  }
+}
+
+function updateTaskFilePath(mysqli $link, string $taskId, string $filePath)
+{
+  $query = "UPDATE tasks
+            SET tasks.file_path = '$filePath' WHERE id = $taskId;";
 
   try {
     $res = mysqli_query($link, $query);

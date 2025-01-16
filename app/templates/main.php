@@ -74,10 +74,14 @@
             <span class="checkbox__text"><?= $value["name"] ?></span>
           </label>
         </td>
-        <td class="task__date"><?= $value["date_expiration"] ?></td>
-
-        <td class="task__controls">
+        <td class="task__file">
+          <?php if ($value["file_path"]): ?>
+            <a class="download-link" href="<?= $value["file_path"] ?>"><?= pathToFileName($value["file_path"]) ?></a>
+          <?php endif ?>
         </td>
+        <td class="task__date"><?= $value["date_expiration"] ?></td>
+        <!-- <td class="task__controls">
+        </td> -->
       </tr>
     <?php endforeach ?>
   </table>
